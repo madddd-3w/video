@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Landing Page</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f7eadc, #fff8f0);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 820px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #3b2f2f;
+    }
+
+    p {
+      color: #6b5b53;
+      line-height: 1.6;
+    }
+
+    .video-wrapper {
+      position: relative;
+      margin-top: 20px;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 15px;
+      background: #000;
+    }
+
+    .countdown {
+      margin-top: 16px;
+      font-size: 17px;
+      font-weight: bold;
+      color: #9b5e34;
+    }
+
+    .floating-ad {
+      display: none;
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 420px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      z-index: 999;
+      animation: muncul 0.4s ease;
+    }
+
+    @keyframes muncul {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .floating-ad a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .floating-ad img {
+      width: 100%;
+      display: block;
+    }
+
+    .ad-text {
+      padding: 12px 15px 15px;
+      text-align: left;
+    }
+
+    .ad-text strong {
+      display: block;
+      color: #3b2f2f;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .ad-text span {
+      color: #7b6a5f;
+      font-size: 14px;
+    }
+
+    .close-ad {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #7b6a5f;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tonton Video Ini</h1>
+    
+
+    <div class="video-wrapper">
+      <video 
+        id="videoPlayer"
+        width="100%"
+        controls
+        autoplay
+        muted
+        playsinline
+        preload="auto"
+      >
+        <!-- GANTI video-saya.mp4 dengan nama video kamu -->
+        <source src="./video-saya.mp4" type="video/mp4">
+        Browser tidak mendukung video.
+      </video>
+    </div>
+
+    
+
+    
+  </div>
+
+  <!-- IKLAN MENGAMBANG -->
+  <div class="floating-ad" id="floatingAd">
+    <button class="close-ad" id="closeAd">×</button>
+
+    <!-- GANTI LINK INI DENGAN LINK IKLAN / AFFILIATE KAMU -->
+    <a href="https://shopee.co.id" target="_blank">
+      <!-- GANTI cover-iklan.png dengan gambar cover iklan kamu -->
+      <img src="./cover-iklan.png" alt="Iklan" />
+
+      <div class="ad-text">
+        <strong>Promo Spesial Hari Ini</strong>
+        <span>Klik untuk melihat penawaran lengkap.</span>
+      </div>
+    </a>
+  </div>
+
+  <script>
+    // GANTI LINK INI DENGAN LINK TUJUAN UTAMA KAMU
+    const linkTujuanUtama = "https://shopee.co.id";
+
+    const videoPlayer = document.getElementById("videoPlayer");
+    const floatingAd = document.getElementById("floatingAd");
+    const closeAd = document.getElementById("closeAd");
+
+    let iklanSudahMuncul = false;
+    let sudahRedirect = false;
+
+    videoPlayer.addEventListener("timeupdate", function () {
+      const waktuVideo = videoPlayer.currentTime;
+
+      // Pada detik ke-15, iklan mengambang muncul
+      if (waktuVideo >= 15 && !iklanSudahMuncul) {
+        floatingAd.style.display = "block";
+        iklanSudahMuncul = true;
+      }
+
+      // Pada detik ke-30, halaman otomatis menuju link utama
+      if (waktuVideo >= 30 && !sudahRedirect) {
+        sudahRedirect = true;
+        localStorage.setItem("lastVideoTime", videoPlayer.currentTime);
+        window.location.href = linkTujuanUtama;
+      }
+    });
+
+    // Tombol untuk menutup iklan mengambang
+    closeAd.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      floatingAd.style.display = "none";
+    });
+
+    // Jika user kembali ke halaman ini, video lanjut dari posisi terakhir
+    window.addEventListener("load", function () {
+      const lastTime = localStorage.getItem("lastVideoTime");
+
+      if (lastTime) {
+        videoPlayer.currentTime = parseFloat(lastTime);
+      }
+    });
+  </script>
+</body>
+</html>
